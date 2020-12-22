@@ -10,14 +10,16 @@
     <canvas></canvas>
     <p>por Lowrran Matias</p>
     <script>
-      let canvas = document.querySelector("canvas");
-      let ctx = canvas.getContext("2d");
-      let x = (window.innerWidth * 0.8) / 2 - 10; //x começar no meio do canvas
-      let y = (window.innerHeight * 0.8) / 2 - 10;
-      let xd = 1; //direção aplicada a x
-      let yd = 1;
-      let t0;
-      let dt;
+      let canvas = document.querySelector("canvas"),
+        ctx = canvas.getContext("2d"),
+        x = (window.innerWidth * 0.8) / 2 - 10, //setar x no meio do canvas
+        y = (window.innerHeight * 0.8) / 2 - 10,
+        xd = 1, //direção aplicada a x
+        yd = 1,
+        ply = y, //init posição y centralizada das paletas
+        pry = y,
+        t0,
+        dt;
       requestAnimationFrame(desenha);
 
       function desenha(t) {
@@ -32,17 +34,44 @@
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        //Atualiza estado
-        if (x < 1) (xd = xd * -1), (x = 1); //inverte a dir, garante que nao extrapola o canvas
-        else if (x + 21 > canvas.width) (xd = xd * -1), (x = canvas.width - 21);
-        if (y < 1) (yd = yd * -1), (y = 1);
-        else if (y + 21 > canvas.height) (yd = yd * -1), (y = canvas.height - 21);
+        //Atualiza estado do quadrado branco
+        if (x < 41) {
+          xd = xd * -1; //inverte a direção
+          x = 41; //garante que nao extrapola
+        } else if (x + 61 > canvas.width) {
+          xd = xd * -1;
+          x = canvas.width - 61;
+        }
+        if (y < 21) {
+          yd = yd * -1;
+          y = 21;
+        } else if (y + 41 > canvas.height) {
+          yd = yd * -1;
+          y = canvas.height - 41;
+        }
+
         x = x + xd * canvas.width * Math.cos(t / 1000) * dt; //equação da posição x
         y = y + yd * canvas.height * Math.sin(t / 1000) * dt;
 
+        //Atualiza estado das paletas
+        if (x < canvas.width / 2) {
+          ply = ply + (y - ply - 50) * (canvas.width / x) * 2 * dt; //equação da posição paleta esq
+          pry = pry + (canvas.height / 2 - pry - 50) * 2 * dt; //equação de retorno ao centro
+        }
+        if (x > canvas.width / 2) {
+          pry =
+            pry + (y - pry - 50) * (canvas.width / (canvas.width - x)) * 2 * dt;
+          ply = ply + (canvas.height / 2 - ply - 50) * 2 * dt;
+        }
+
         //Desenha elementos
         ctx.fillStyle = "white";
-        ctx.fillRect(x, y, 20, 20);
+        ctx.fillRect(x, y, 20, 20); //quadrado branco
+        ctx.fillStyle = "rebeccapurple";
+        ctx.fillRect(50, 0, canvas.width - 100, 20); // borda superior
+        ctx.fillRect(50, canvas.height - 20, canvas.width - 100, 20); //borda inferior
+        ctx.fillRect(20, ply, 20, 100); //paleta esq
+        ctx.fillRect(canvas.width - 40, pry, 20, 100); //paleta dir
 
         t0 = t;
         requestAnimationFrame(desenha);
