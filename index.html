@@ -15,6 +15,8 @@
       canvas.width = window.innerWidth * 0.8;
       canvas.height = window.innerHeight * 0.8;
 
+      let pontos =0;
+
       let p = {
         x: canvas.width / 2 - 10, //x começar no meio do canvas
         y: canvas.height / 2 - 10,
@@ -96,11 +98,27 @@
           sprite.controlar?.(p);
           sprite.mover();
           sprite.desenhar();
+          if(colidiram(o,sprite)&& o!==sprite){
+            o.x=-1000;
+            o.y=0;
+            o.vx=0;
+            o.ax=0;
+            sprite.x = 1000;
+            sprite.vx= 100;
+            sprite.ax=0;
+            pontos++;
+          }
+            if(colidiram(p,sprite)&& o!==sprite){
+            sprite.x = 1000;
+            sprite.vx= 100;
+            sprite.ax=0;
+            pontos-=3;
+          }
         }
-
-        //Desenha elementos
-
-        t0 = t;
+        ctx.fillStyle = "yellow";
+        ctx.font = "20px Impact"
+        ctx.fillText(pontos, 30, 50);        
+        t0 = t;   
         requestAnimationFrame(desenha);
       }
 
@@ -147,6 +165,14 @@
           this.ay = 0;
           this.vy = 0;
         }
+      }
+      function colidiram(A,B){
+        return!(
+          (A.x > B.x + 20)
+          || (A.x +20 < B.x)
+          || (A.y > B.y+20)
+          || (A.y +20 < B.y)
+        );
       }
 
       function teclaPressionada(event) {
