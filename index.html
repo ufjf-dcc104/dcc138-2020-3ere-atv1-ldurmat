@@ -31,8 +31,8 @@
       const sprites = [];
       for (let ne = 0; ne < 10; ne++) {
         let e = {
-          x: canvas.width * Math.random(),
-          y: canvas.height * Math.random(),
+          x: canvas.width * (Math.random()*2-1),
+          y: canvas.height * (Math.random()*2-1),
           vx: 0,
           vy: 0,
           ax: 0,
@@ -71,7 +71,7 @@
       sprites.push(o);
 
       let t0, dt;
-      const Acel = window.innerWidth * 0.5;
+      const Acel = window.innerWidth;
 
       requestAnimationFrame(desenha);
 
@@ -118,13 +118,13 @@
       }
 
       function persegueAlvo(alvo) {
-        this.ax = 0.8 * (alvo.x - this.x) - 0.5 * this.vx;
-        this.ay = 0.8 * (alvo.y - this.y) - 0.5 * this.vy;
+        this.ax = 200 * Math.sign(alvo.x - this.x) - 0.8 * this.vx;
+        this.ay = 200 * Math.sign(alvo.y - this.y) - 0.8 * this.vy;
       }
 
       function evitaAlvo(alvo) {
-        this.ax = -0.8 * (alvo.x - this.x) + 0.5 * this.vx;
-        this.ay = -0.8 * (alvo.y - this.y) + 0.5 * this.vy;
+        this.ax = -200 * Math.sign(alvo.x - this.x) + 0.8 * this.vx;
+        this.ay = -200 * Math.sign(alvo.y - this.y) + 0.8 * this.vy;
       }
 
       function limitaObj() {
