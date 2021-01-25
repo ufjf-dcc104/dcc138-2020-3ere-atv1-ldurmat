@@ -21,8 +21,8 @@
         ax: 0,
         ay: 0,
         cor: "white",
-        desenhar: desenharElemento,
-        mover: moverElemento,
+        desenhar: desenhaElemento,
+        mover: moveElemento,
       };
       let e = {
         x: 300,
@@ -32,8 +32,9 @@
         ax: 0,
         ay: 0,
         cor: "red",
-        desenhar: desenharElemento,
-        mover: moverElemento,
+        desenhar: desenhaElemento,
+        mover: moveElemento,
+        controlar: persegueAlvo,
       };
 
       let t0, dt;
@@ -50,9 +51,7 @@
         canvas.height = window.innerHeight * 0.8;
 
         //Controladores
-        e.ax = 0.5 * (p.x - e.x) - 0.2 * e.vx;
-        e.ay = 0.5 * (p.y - e.y) - 0.2 * e.vy;
-
+        e.controlar(p);
         //Desenha fundo
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -69,7 +68,7 @@
         requestAnimationFrame(desenha);
       }
 
-      function moverElemento() {
+      function moveElemento() {
         if (this.x < 1) this.x = 1;
         //garante que nao extrapola o canvas
         else if (this.x + 21 > canvas.width) this.x = canvas.width - 21;
@@ -82,48 +81,59 @@
         addEventListener("keydown", teclaPressionada);
         addEventListener("keyup", teclaSolta);
       }
-      function desenharElemento() {
-          ctx.fillStyle = this.cor;
-          ctx.fillRect(this.x, this.y, 20, 20);
+      function desenhaElemento() {
+        ctx.fillStyle = this.cor;
+        ctx.fillRect(this.x, this.y, 20, 20);
       }
-        function teclaPressionada(event) {
-          console.log(event.key);
-          switch (event.key) {
-            case "w":
-              p.ay = -Acel;
-              break;
-            case "s":
-              p.ay = +Acel;
-              break;
-            case "a":
-              p.ax = -Acel;
-              break;
-            case "d":
-              p.ax = +Acel;
-              break;
-          }
+
+      function persegueAlvo(alvo) {
+        this.ax = 0.8 * (alvo.x - this.x) - 0.5 * this.vx;
+        this.ay = 0.8 * (alvo.y - this.y) - 0.5 * this.vy;
+      }
+
+      function evitaAlvo(alvo) {
+        this.ax = -0.8 * (alvo.x - this.x) + 0.5 * this.vx;
+        this.ay = -0.8 * (alvo.y - this.y) + 0.5 * this.vy;
+      }
+
+      function teclaPressionada(event) {
+        console.log(event.key);
+        switch (event.key) {
+          case "w":
+            p.ay = -Acel;
+            break;
+          case "s":
+            p.ay = +Acel;
+            break;
+          case "a":
+            p.ax = -Acel;
+            break;
+          case "d":
+            p.ax = +Acel;
+            break;
         }
-        function teclaSolta(event) {
-          console.log(event.key);
-          switch (event.key) {
-            case "w":
-              p.vy = p.vy * 0.8;
-              p.ay = 0;
-              break;
-            case "s":
-              p.vy = p.vy * 0.8;
-              p.ay = 0;
-              break;
-            case "a":
-              p.vx = p.vx * 0.8;
-              p.ax = 0;
-              break;
-            case "d":
-              p.vx = p.vx * 0.8;
-              p.ax = 0;
-              break;
-          }
+      }
+      function teclaSolta(event) {
+        console.log(event.key);
+        switch (event.key) {
+          case "w":
+            p.vy = p.vy * 0.8;
+            p.ay = 0;
+            break;
+          case "s":
+            p.vy = p.vy * 0.8;
+            p.ay = 0;
+            break;
+          case "a":
+            p.vx = p.vx * 0.8;
+            p.ax = 0;
+            break;
+          case "d":
+            p.vx = p.vx * 0.8;
+            p.ax = 0;
+            break;
         }
+      }
     </script>
   </body>
 </html>
