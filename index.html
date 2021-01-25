@@ -15,10 +15,10 @@
       canvas.width = window.innerWidth * 0.8;
       canvas.height = window.innerHeight * 0.8;
 
-      let pontos =0;
+      let pontos = 0;
 
       let p = {
-        x: canvas.width / 2 - 10, //x começar no meio do canvas
+        x: canvas.width / 2 - 10,
         y: canvas.height / 2 - 10,
         w: 30,
         h: 30,
@@ -35,8 +35,8 @@
       const sprites = [];
       for (let ne = 0; ne < 10; ne++) {
         let e = {
-          x: canvas.width * (Math.random()*2-1),
-          y: canvas.height * (Math.random()*2-1),
+          x: canvas.width * (Math.random() * 2 - 1),
+          y: canvas.height * (Math.random() * 2 - 1),
           w: 15,
           h: 15,
           vx: 0,
@@ -52,15 +52,15 @@
       }
 
       let o = {
-        x: -1000, //x começar no meio do canvas
+        x: -1000,
         y: 0,
         w: 5,
-        h:5,
+        h: 5,
         vx: 0,
         vy: 0,
         ax: 0,
         ay: 0,
-        cor: "blue",
+        cor: "orange",
         desenhar: desenhaElemento,
         mover: moveElemento,
         controlar: function () {
@@ -71,6 +71,7 @@
             this.y < -20
           ) {
             this.x = -1000;
+            this.y=0;
             this.ax = 0;
             this.vx = 0;
           }
@@ -98,34 +99,34 @@
         //Atualiza estado
         p.mover();
         p.prender();
-        
+
         for (let s = 0; s < sprites.length; s++) {
           const sprite = sprites[s];
           sprite.controlar?.(p);
           sprite.mover();
           sprite.desenhar();
-          if(colidiram(o,sprite)&& o!==sprite){
-            o.x=-1000;
-            o.y=0;
-            o.vx=0;
-            o.ax=0;
+          if (colidiram(o, sprite) && o !== sprite) {
+            o.x = -1000;
+            o.y = 0;
+            o.vx = 0;
+            o.ax = 0;
             sprite.x = 1000;
-            sprite.vx= 100;
-            sprite.ax=0;
+            sprite.vx = 100;
+            sprite.ax = 0;
             pontos++;
           }
-            if(colidiram(p,sprite)&& o!==sprite){
+          if (colidiram(p, sprite) && o !== sprite) {
             sprite.x = 1000;
-            sprite.vx= 100;
-            sprite.ax=0;
-            pontos-=3;
+            sprite.vx = 100;
+            sprite.ax = 0;
+            pontos -= 3;
           }
         }
         p.desenhar();
         ctx.fillStyle = "yellow";
-        ctx.font = "20px Impact"
-        ctx.fillText(pontos, 30, 50);        
-        t0 = t;   
+        ctx.font = "20px Impact";
+        ctx.fillText(pontos, 30, 50);
+        t0 = t;
         requestAnimationFrame(desenha);
       }
 
@@ -173,12 +174,12 @@
           this.vy = 0;
         }
       }
-      function colidiram(A,B){
-        return!(
-          (A.x > B.x + B.w)
-          || (A.x +A.w < B.x)
-          || (A.y > B.y+B.h)
-          || (A.y +A.h < B.y)
+      function colidiram(A, B) {
+        return !(
+          A.x > B.x + B.w ||
+          A.x + A.w < B.x ||
+          A.y > B.y + B.h ||
+          A.y + A.h < B.y
         );
       }
 
@@ -199,9 +200,10 @@
             break;
           case " ":
             if (o.x === -1000) {
-              o.x = p.x;
-              o.y = p.y;
-              o.vx = canvas.width;
+              o.x = p.x+p.w/2;
+              o.y = p.y+p.h/2;
+              o.vx = canvas.width+Math.max(0,p.vx);
+              o.vy = p.vy;
               o.ax = -canvas.width / 3;
             }
         }
