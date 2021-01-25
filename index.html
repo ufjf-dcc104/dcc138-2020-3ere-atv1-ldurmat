@@ -25,6 +25,7 @@
         cor: "white",
         desenhar: desenhaElemento,
         mover: moveElemento,
+        prender: limitaObj,
       };
 
       const sprites = [];
@@ -43,6 +44,31 @@
         };
         sprites.push(e);
       }
+
+      let o = {
+        x: -1000, //x começar no meio do canvas
+        y: 0,
+        vx: 0,
+        vy: 0,
+        ax: 0,
+        ay: 0,
+        cor: "blue",
+        desenhar: desenhaElemento,
+        mover: moveElemento,
+        controlar: function () {
+          if (
+            this.x > canvas.width ||
+            this.x < -20 ||
+            this.y > canvas.height ||
+            this.y < -20
+          ) {
+            this.x = -1000;
+            this.ax = 0;
+            this.vx = 0;
+          }
+        },
+      };
+      sprites.push(o);
 
       let t0, dt;
       const Acel = window.innerWidth * 0.5;
@@ -63,10 +89,11 @@
 
         //Atualiza estado
         p.mover();
+        p.prender();
         p.desenhar();
         for (let s = 0; s < sprites.length; s++) {
           const sprite = sprites[s];
-          sprite.controlar(p);
+          sprite.controlar?.(p);
           sprite.mover();
           sprite.desenhar();
         }
@@ -78,11 +105,6 @@
       }
 
       function moveElemento() {
-        if (this.x < 1) this.x = 1;
-        //garante que nao extrapola o canvas
-        else if (this.x + 21 > canvas.width) this.x = canvas.width - 21;
-        if (this.y < 1) this.y = 1;
-        else if (this.y + 21 > canvas.height) this.y = canvas.height - 21;
         this.vx = this.vx + this.ax * dt;
         this.vy = this.vy + this.ay * dt;
         this.x = this.x + this.vx * dt; //equação da posição x
@@ -105,6 +127,28 @@
         this.ay = -0.8 * (alvo.y - this.y) + 0.5 * this.vy;
       }
 
+      function limitaObj() {
+        //garante que nao extrapola o canvas
+        if (this.x < 0) {
+          this.x = 0;
+          this.ax = 0;
+          this.vx = 0;
+        } else if (this.x + 20 > canvas.width) {
+          this.x = canvas.width - 20;
+          this.ax = 0;
+          this.vx = 0;
+        }
+        if (this.y < 0) {
+          this.y = 0;
+          this.ay = 0;
+          this.vy = 0;
+        } else if (this.y + 20 > canvas.height) {
+          this.y = canvas.height - 20;
+          this.ay = 0;
+          this.vy = 0;
+        }
+      }
+
       function teclaPressionada(event) {
         console.log(event.key);
         switch (event.key) {
@@ -120,6 +164,13 @@
           case "d":
             p.ax = +Acel;
             break;
+          case " ":
+            if (o.x === -1000) {
+              o.x = p.x;
+              o.y = p.y;
+              o.vx = canvas.width;
+              o.ax = -canvas.width / 3;
+            }
         }
       }
       function teclaSolta(event) {
