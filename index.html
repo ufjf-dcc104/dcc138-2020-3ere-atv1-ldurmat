@@ -16,7 +16,7 @@
       canvas.height = window.innerHeight * 0.8;
 
       let pontos = 0;
-
+      let mortes = 0;
       let p = {
         x: canvas.width / 2 - 10,
         y: canvas.height / 2 - 10,
@@ -54,8 +54,8 @@
       let o = {
         x: -1000,
         y: 0,
-        w: 5,
-        h: 5,
+        w: 10,
+        h: 10,
         vx: 0,
         vy: 0,
         ax: 0,
@@ -93,7 +93,7 @@
         canvas.height = window.innerHeight * 0.8;
 
         //Desenha fundo
-        ctx.fillStyle = "black";
+        ctx.fillStyle = "gray";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         //Atualiza estado
@@ -119,13 +119,17 @@
             sprite.x = 1000;
             sprite.vx = 100;
             sprite.ax = 0;
-            pontos -= 3;
+            mortes++;
           }
         }
         p.desenhar();
         ctx.fillStyle = "yellow";
         ctx.font = "20px Impact";
-        ctx.fillText(pontos, 30, 50);
+        ctx.fillText(mortes, 30, 50);
+        ctx.fillText(pontos, 60, 50);
+        ctx.font = "16px Impact"
+        ctx.fillText("Mortes", 5, 20);    
+        ctx.fillText("Pontos", 60, 20);
         t0 = t;
         requestAnimationFrame(desenha);
       }
