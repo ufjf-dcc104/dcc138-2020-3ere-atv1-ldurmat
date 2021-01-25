@@ -12,10 +12,12 @@
     <script>
       let canvas = document.querySelector("canvas");
       let ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth * 0.8;
+      canvas.height = window.innerHeight * 0.8;
 
       let p = {
-        x: (window.innerWidth * 0.8) / 2 - 10, //x começar no meio do canvas
-        y: (window.innerHeight * 0.8) / 2 - 10,
+        x: canvas.width / 2 - 10, //x começar no meio do canvas
+        y: canvas.height / 2 - 10,
         vx: 0,
         vy: 0,
         ax: 0,
@@ -24,18 +26,23 @@
         desenhar: desenhaElemento,
         mover: moveElemento,
       };
-      let e = {
-        x: 300,
-        y: 200,
-        vx: 0,
-        vy: 0,
-        ax: 0,
-        ay: 0,
-        cor: "red",
-        desenhar: desenhaElemento,
-        mover: moveElemento,
-        controlar: persegueAlvo,
-      };
+
+      const sprites = [];
+      for (let ne = 0; ne < 10; ne++) {
+        let e = {
+          x: canvas.width * Math.random(),
+          y: canvas.height * Math.random(),
+          vx: 0,
+          vy: 0,
+          ax: 0,
+          ay: 0,
+          cor: "red",
+          desenhar: desenhaElemento,
+          mover: moveElemento,
+          controlar: persegueAlvo,
+        };
+        sprites.push(e);
+      }
 
       let t0, dt;
       const Acel = window.innerWidth * 0.5;
@@ -50,19 +57,21 @@
         canvas.width = window.innerWidth * 0.8;
         canvas.height = window.innerHeight * 0.8;
 
-        //Controladores
-        e.controlar(p);
         //Desenha fundo
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         //Atualiza estado
         p.mover();
-        e.mover();
+        p.desenhar();
+        for (let s = 0; s < sprites.length; s++) {
+          const sprite = sprites[s];
+          sprite.controlar(p);
+          sprite.mover();
+          sprite.desenhar();
+        }
 
         //Desenha elementos
-        p.desenhar();
-        e.desenhar();
 
         t0 = t;
         requestAnimationFrame(desenha);
